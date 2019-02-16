@@ -43,8 +43,9 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    /*Google implemetation.*/
-    implementation 'com.google.android.gms:play-services:12.0.1'
+    /*Google Map implemetation.*/
+    implementation 'com.google.android.gms:play-services-maps:16.1.0'
+
 
 }
 repositories {

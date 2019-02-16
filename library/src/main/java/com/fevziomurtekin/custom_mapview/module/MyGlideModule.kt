@@ -1,4 +1,4 @@
-package com.fevziomurtekin.custom_mapview.Module
+package com.fevziomurtekin.custom_mapview.module
 
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.module.AppGlideModule
