@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
 import android.util.DisplayMetrics
+import android.view.View
+import android.widget.ImageView
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -14,7 +16,7 @@ import com.google.android.gms.maps.model.LatLng
 
 const val LOCATION = 1001
 
-open class View : AppCompatActivity(), OnMapReadyCallback {
+open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener {
 
     /*Map view*/
     private lateinit var mapView: MapView
@@ -32,6 +34,8 @@ open class View : AppCompatActivity(), OnMapReadyCallback {
 
     private val metrics = DisplayMetrics()
 
+    private lateinit var btn_search: ImageView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,8 +50,11 @@ open class View : AppCompatActivity(), OnMapReadyCallback {
         initMapView()
 
 
+        btn_search = findViewById<ImageView>(R.id.btn_search)
+        btn_search.setOnClickListener(this)
+
+
         /*TODO
-        * location izni alınmış o kontrol edilip izin alınacak.
         * location izni alındıktan sonra onReadMapkey yapılacak.
         * Search işleminin ve popup işleminin animasyonu yapılacak.
         * arama kısmında ve menu kısmındaki açılır liste animasyonu yapılacak.*/
@@ -79,4 +86,20 @@ open class View : AppCompatActivity(), OnMapReadyCallback {
         mMap = p0!!
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(focus,6f))
     }
+
+    private fun searchAnimation(){
+
+
+
+    }
+
+    override fun onClick(v: View?) {
+        when(v!!.id) {
+            R.id.btn_search -> {
+                searchAnimation()
+            }
+        }
+    }
+
+
 }
