@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">library</string>
+    <string name="default_hint">Search any place.</string>
+    <string name="default_menu">All</string>
 </resources>

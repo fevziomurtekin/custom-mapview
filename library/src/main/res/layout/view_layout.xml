@@ -1,0 +1,100 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/map_parent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+
+    <com.google.android.gms.maps.MapView
+            android:id="@+id/mapview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+    />
+
+
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_target"
+                android:src="@drawable/target"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:padding="5dp"/>
+
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_search"
+                android:padding="5dp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/btn_target"
+                android:src="@drawable/search"
+                />
+
+        <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/search_bg"
+                android:layout_toLeftOf="@+id/btn_search">
+
+            <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/edt_search"
+                    android:textSize="15sp"
+                    android:inputType="text"
+                    android:lines="1"
+                    android:textColor="@color/blue"
+                    android:hint="@string/default_hint"
+                    android:padding="10dp"
+                    android:background="@drawable/search_view_bg"/>
+
+
+            <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_below="@id/edt_search"
+                    android:background="@drawable/recycler_bg"
+                    android:id="@+id/recycler_search"/>
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/bottom_menu"
+            android:layout_alignParentBottom="true">
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/blue"
+                android:padding="10dp"
+                android:gravity="center"
+                android:id="@+id/btn_menu"
+                android:text="@string/default_menu"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:drawableRight="@drawable/down"
+
+        />
+        <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@drawable/menu_bg"
+                android:id="@+id/place_type"
+                android:layout_below="@+id/btn_menu"
+                />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
