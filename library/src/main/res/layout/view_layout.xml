@@ -4,12 +4,11 @@
                 android:layout_height="match_parent">
 
 
-
     <com.google.android.gms.maps.MapView
             android:id="@+id/mapview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-    />
+            android:layout_marginBottom="1dp" android:layout_alignBottom="@+id/bottom_menu"/>
 
 
 
@@ -81,9 +80,9 @@
                 android:gravity="center"
                 android:id="@+id/btn_menu"
                 android:text="@string/default_menu"
-                android:textSize="14sp"
+                android:textSize="15sp"
                 android:textColor="@color/white"
-                android:drawableRight="@drawable/down"
+                android:drawableRight="@drawable/updown_bg"
 
         />
         <android.support.v7.widget.RecyclerView
