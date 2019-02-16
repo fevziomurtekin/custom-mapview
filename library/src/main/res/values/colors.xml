@@ -5,4 +5,5 @@
     <color name="stroke_focused_color">#000066</color>
     <color name="stroke_nfocused_color">#000099</color>
     <color name="blue">#0000b2</color>
+    <color name="black10">#22000000</color>
 </resources>
