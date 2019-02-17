@@ -13,11 +13,16 @@ import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.ImageView
+import com.fevziomurtekin.custom_mapview.data.Place
+import com.fevziomurtekin.custom_mapview.util.PlaceType
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.view_layout.*
 
 const val LOCATION = 1001
@@ -46,6 +51,9 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
 
     /*Default animation time.*/
     private var searchAnimation_time = 300
+
+    /*Places list added in Activity*/
+    private var placesList : List<Place>? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -182,6 +190,76 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
             R.id.btn_search -> {
                 searchAnimation()
             }
+        }
+    }
+
+    private fun addPlacesList(places: List<Place>){
+        this.placesList=places
+
+        if(placesList!=null) {
+            for (i in 0..placesList!!.size - 1) {
+                val markerOptions : MarkerOptions = MarkerOptions()
+                    .snippet(placesList!![i].name)
+                    .position(LatLng(placesList!![i].latitude,placesList!![i].longitude))
+                    .title("")
+                    .draggable(false)
+
+                setIconMarker(placesList!![i],markerOptions)
+            }
+        }
+    }
+
+    private fun setIconMarker(place: Place, markerOptions: MarkerOptions) {
+        if(!place.isUrl){
+            val icon :BitmapDescriptor
+            when(place.placeType){
+                PlaceType.OTHER->{
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.other)
+                }
+                PlaceType.BANK->{
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.bank)
+                }
+                PlaceType.COFFEE->{
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.coffee)
+
+                }
+                PlaceType.GAS_STATION->{
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.gas)
+
+                }
+                PlaceType.HOSPITAL->{
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.hospital)
+
+                }
+                PlaceType.SCHOOL->{
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.scholl)
+
+                }
+                PlaceType.HOTEL->{
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.hotel)
+
+                }
+                PlaceType.BAR->{
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.bar)
+
+                }
+                PlaceType.STORE->{
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.other)
+
+                }
+                PlaceType.PARKING_AREA->{
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.park)
+
+                }
+                PlaceType.RESTUARANT->{
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.rest)
+
+                }
+            }
+            markerOptions.icon(icon)
+        }else{
+
+
         }
     }
 

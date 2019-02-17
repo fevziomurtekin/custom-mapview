@@ -39,6 +39,7 @@
         <RelativeLayout
                 android:layout_width="0dp"
                 android:id="@+id/rl_search"
+                android:layout_marginRight="5dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/search_bg"
                 android:layout_toLeftOf="@+id/btn_search">
