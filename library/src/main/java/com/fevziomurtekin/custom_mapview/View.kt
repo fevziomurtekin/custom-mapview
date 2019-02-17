@@ -49,12 +49,15 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
 
     private val metrics = DisplayMetrics()
 
-    private lateinit var btn_search: ImageView
-
     private var search_counter :Int =0
+
+    private var menu_counter : Int=0
 
     /*Default animation time.*/
     private var searchAnimation_time = 300
+
+    /*Default animation time.*/
+    private var menuAnimation_time = 300
 
     /*Places list added in Activity*/
     private var placesList : List<Place>? = null
@@ -72,10 +75,9 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
 
         initMapView()
 
-
-        btn_search = findViewById<ImageView>(R.id.btn_search)
         btn_search.setOnClickListener(this)
 
+        btn_menu.setOnClickListener(this)
 
         /*TODO
         * location izni alındıktan sonra onReadMapkey yapılacak.
@@ -189,15 +191,93 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
         search_counter++
     }
 
+    private fun menuAnimation(){
+        var startX :Float = 0F
+        var finishX :Float = (mheight/1.85).toFloat()
+
+        if(menu_counter%2==0){ //show animation.
+
+            val scaleX = ValueAnimator.ofFloat(startX,finishX)
+
+            scaleX.addUpdateListener {
+                place_type.layoutParams.height = (it.animatedValue as Float).toInt()
+                place_type.parent.requestLayout()
+            }
+
+            scaleX.addListener(object :Animator.AnimatorListener{
+                override fun onAnimationRepeat(animation: Animator?) {
+
+                }
+
+                override fun onAnimationEnd(animation: Animator?) {
+                    place_type.layoutParams.height = finishX.toInt()
+                    place_type.parent.requestLayout()
+                    btn_menu.isSelected=true
+                }
+
+                override fun onAnimationCancel(animation: Animator?) {
+                }
+
+                override fun onAnimationStart(animation: Animator?) {
+                }
+
+            })
+            scaleX.interpolator = LinearInterpolator()
+            scaleX.duration = menuAnimation_time.toLong()
+            scaleX.start()
+
+
+
+        }else{ //dismiss animation.
+
+            val scaleX = ValueAnimator.ofFloat(finishX,startX)
+            scaleX.addUpdateListener {
+                place_type.layoutParams.height = (it.animatedValue as Float).toInt()
+                place_type.parent.requestLayout()
+            }
+
+            scaleX.addListener(object :Animator.AnimatorListener{
+                override fun onAnimationRepeat(animation: Animator?) {
+
+                }
+
+                override fun onAnimationEnd(animation: Animator?) {
+                    place_type.layoutParams.height = startX.toInt()
+                    place_type.parent.requestLayout()
+                    btn_menu.isSelected=false
+                }
+
+                override fun onAnimationCancel(animation: Animator?) {
+                }
+
+                override fun onAnimationStart(animation: Animator?) {
+                }
+
+            })
+            scaleX.interpolator = LinearInterpolator()
+            scaleX.duration = menuAnimation_time.toLong()
+            scaleX.start()
+
+        }
+
+        menu_counter++
+    }
+
     override fun onClick(v: View?) {
         when(v!!.id) {
             R.id.btn_search -> {
                 searchAnimation()
             }
+            R.id.btn_menu ->{
+                if(placesList!=null) {
+                    if (!placesList!!.isEmpty())
+                        menuAnimation()
+                }
+            }
         }
     }
 
-    public fun addPlacesList(places: List<Place>){
+    fun addPlacesList(places: List<Place>){
         this.placesList=places
 
         if(placesList!=null) {
@@ -259,7 +339,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
             GlideApp.with(this)
                 .asBitmap()
                 .load(icon)
-                .override((scale * 45).toInt(), (scale * 45).toInt())
+                .override((scale * 40).toInt(), (scale * 40).toInt())
                 .into(object : SimpleTarget<Bitmap>() {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resource))
@@ -272,7 +352,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
             GlideApp.with(this)
                 .asBitmap()
                 .load(place.url)
-                .override((scale * 45).toInt(), (scale * 45).toInt())
+                .override((scale * 40).toInt(), (scale * 40).toInt())
                 .into(object : SimpleTarget<Bitmap>() {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resource))
