@@ -3,9 +3,11 @@ package com.fevziomurtekin.custom_mapview
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Point
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
@@ -35,6 +37,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.view_layout.*
 
 const val LOCATION = 1001
+const val PHONE = 1002
 
 open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener, GoogleMap.OnMapClickListener,
     GoogleMap.OnMarkerClickListener {
@@ -73,6 +76,8 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
     private var isMenuList : Boolean = false
 
     private var markerAdapter:MarkerAdapter ?=null
+
+    private var phone:String =""
 
 
 
@@ -509,6 +514,12 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         }catch (ignored:java.lang.Exception){}
     }
 
+    private fun callPhone(){
+        val intent = Intent(Intent.ACTION_CALL)
+        intent.setData(Uri.parse("tel:"+phone))
+        startActivity(intent)
+    }
+
     override fun onClick(v: View?) {
         when(v!!.id) {
             R.id.btn_search -> {
@@ -520,6 +531,29 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                         menuAnimation()
                 }
             }
+            R.id.btn_phone->{
+
+                phone = v.getTag() as String
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (this.checkSelfPermission(android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        this.requestPermissions(
+                            arrayOf(
+                                android.Manifest.permission.CALL_PHONE
+                            ), PHONE
+                        )
+                    }else{
+                        callPhone()
+                    }
+                }
+
+
+
+
+            }
+            R.id.btn_way->{
+
+            }
         }
     }
 
@@ -528,7 +562,20 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         return false
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when(requestCode){
+            LOCATION->{
 
+            }
+            PHONE->{
+                if (this.checkSelfPermission(android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    callPhone()
+                }
+            }
+        }
+    }
 
 
 }
