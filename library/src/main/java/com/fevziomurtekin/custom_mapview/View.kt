@@ -9,13 +9,14 @@ import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.util.DisplayMetrics
 import android.view.View
-import android.view.animation.AccelerateInterpolator
 import android.view.animation.LinearInterpolator
-import android.widget.ImageView
+import android.widget.LinearLayout
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
+import com.fevziomurtekin.custom_mapview.Adapter.MenuAdapter
 import com.fevziomurtekin.custom_mapview.data.Place
 import com.fevziomurtekin.custom_mapview.module.GlideApp
 import com.fevziomurtekin.custom_mapview.util.PlaceType
@@ -23,7 +24,6 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
@@ -79,10 +79,17 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
 
         btn_menu.setOnClickListener(this)
 
+        initRecyclers()
+
         /*TODO
         * location izni alındıktan sonra onReadMapkey yapılacak.
         * Search işleminin ve popup işleminin animasyonu yapılacak.
         * arama kısmında ve menu kısmındaki açılır liste animasyonu yapılacak.*/
+    }
+
+    private fun initRecyclers() {
+        recycler_search.layoutManager = LinearLayoutManager(this,LinearLayout.VERTICAL,false)
+        recycler_place_type.layoutManager = LinearLayoutManager(this,LinearLayout.VERTICAL,false)
     }
 
     private fun setDisplaySize() {
@@ -200,8 +207,8 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
             val scaleX = ValueAnimator.ofFloat(startX,finishX)
 
             scaleX.addUpdateListener {
-                place_type.layoutParams.height = (it.animatedValue as Float).toInt()
-                place_type.parent.requestLayout()
+                recycler_place_type.layoutParams.height = (it.animatedValue as Float).toInt()
+                recycler_place_type.parent.requestLayout()
             }
 
             scaleX.addListener(object :Animator.AnimatorListener{
@@ -210,8 +217,8 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
                 }
 
                 override fun onAnimationEnd(animation: Animator?) {
-                    place_type.layoutParams.height = finishX.toInt()
-                    place_type.parent.requestLayout()
+                    recycler_place_type.layoutParams.height = finishX.toInt()
+                    recycler_place_type.parent.requestLayout()
                     btn_menu.isSelected=true
                 }
 
@@ -232,8 +239,8 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
 
             val scaleX = ValueAnimator.ofFloat(finishX,startX)
             scaleX.addUpdateListener {
-                place_type.layoutParams.height = (it.animatedValue as Float).toInt()
-                place_type.parent.requestLayout()
+                recycler_place_type.layoutParams.height = (it.animatedValue as Float).toInt()
+                recycler_place_type.parent.requestLayout()
             }
 
             scaleX.addListener(object :Animator.AnimatorListener{
@@ -242,8 +249,8 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
                 }
 
                 override fun onAnimationEnd(animation: Animator?) {
-                    place_type.layoutParams.height = startX.toInt()
-                    place_type.parent.requestLayout()
+                    recycler_place_type.layoutParams.height = startX.toInt()
+                    recycler_place_type.parent.requestLayout()
                     btn_menu.isSelected=false
                 }
 
@@ -291,6 +298,17 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
                 setIconMarker(placesList!![i],markerOptions)
             }
         }
+
+        recycler_place_type.adapter = MenuAdapter(getMenuType(places),this)
+
+    }
+
+    private fun getMenuType(places: List<Place>): List<String> {
+        val arrays :List<String> = ArrayList()
+
+
+
+        return arrays
     }
 
     private fun setIconMarker(place: Place, markerOptions: MarkerOptions) {

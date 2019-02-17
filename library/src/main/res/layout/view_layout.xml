@@ -93,7 +93,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:background="@drawable/menu_bg"
-                android:id="@+id/place_type"
+                android:id="@+id/recycler_place_type"
                 android:layout_below="@+id/btn_menu"
                 />
 
