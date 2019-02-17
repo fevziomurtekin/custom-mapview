@@ -31,7 +31,7 @@ import kotlinx.android.synthetic.main.view_layout.*
 
 const val LOCATION = 1001
 
-open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener {
+open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener, GoogleMap.OnMapClickListener {
 
     /*Map view*/
     private lateinit var mapView: MapView
@@ -61,6 +61,10 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
 
     /*Places list added in Activity*/
     private var placesList : List<Place>? = null
+
+    private var isSearchList : Boolean = false
+
+    private var isMenuList : Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,6 +121,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
     override fun onMapReady(p0: GoogleMap?) {
         mMap = p0!!
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(focus,6f))
+        mMap.setOnMapClickListener(this)
     }
 
     private fun searchAnimation(){
@@ -143,6 +148,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
                 override fun onAnimationEnd(animation: Animator?) {
                     rl_search.layoutParams.width = finishX.toInt()
                     rl_search.parent.requestLayout()
+                    isSearchList=true
                 }
 
                 override fun onAnimationCancel(animation: Animator?) {
@@ -180,6 +186,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
                 override fun onAnimationEnd(animation: Animator?) {
                     rl_search.layoutParams.width = startX.toInt()
                     rl_search.parent.requestLayout()
+                    isSearchList=false
                 }
 
                 override fun onAnimationCancel(animation: Animator?) {
@@ -220,6 +227,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
                     recycler_place_type.layoutParams.height = finishX.toInt()
                     recycler_place_type.parent.requestLayout()
                     btn_menu.isSelected=true
+                    isMenuList=true
                 }
 
                 override fun onAnimationCancel(animation: Animator?) {
@@ -252,6 +260,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
                     recycler_place_type.layoutParams.height = startX.toInt()
                     recycler_place_type.parent.requestLayout()
                     btn_menu.isSelected=false
+                    isMenuList=false
                 }
 
                 override fun onAnimationCancel(animation: Animator?) {
@@ -268,6 +277,16 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
         }
 
         menu_counter++
+    }
+
+    override fun onMapClick(p0: LatLng?) {
+        if(isMenuList) {
+            menuAnimation()
+        }
+
+        if(isSearchList){
+            searchAnimation()
+        }
     }
 
     override fun onClick(v: View?) {
@@ -304,9 +323,18 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
     }
 
     private fun getMenuType(places: List<Place>): List<String> {
-        val arrays :List<String> = ArrayList()
+        val arrays :MutableList<String> = mutableListOf()
 
 
+            for(i in 0..places.size-1) {
+                if (!arrays.isEmpty()) {
+                    var isFound = false
+                    for (y in 0..arrays.size - 1) {
+                        if (arrays[y] == places[i].placeType.name) isFound = true
+                    }
+                    if (!isFound) arrays.add(places[i].placeType.name)
+                }else arrays.add(places[i].placeType.name)
+            }
 
         return arrays
     }

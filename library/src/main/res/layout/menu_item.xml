@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/white"
-            android:layout_below="@id/txt_search_item"
+            android:layout_below="@id/txt_menu_item"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"/>
 
