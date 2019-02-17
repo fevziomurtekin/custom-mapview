@@ -1,38 +1,43 @@
 package com.fevziomurtekin.custom_mapview
 
 import android.animation.Animator
-import android.animation.ObjectAnimator
+import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Point
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
+import com.fevziomurtekin.custom_mapview.Adapter.MarkerAdapter
 import com.fevziomurtekin.custom_mapview.Adapter.MenuAdapter
 import com.fevziomurtekin.custom_mapview.Adapter.SearchAdapter
 import com.fevziomurtekin.custom_mapview.data.Place
 import com.fevziomurtekin.custom_mapview.module.GlideApp
 import com.fevziomurtekin.custom_mapview.util.PlaceType
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.view_layout.*
 
 const val LOCATION = 1001
 
-open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener, GoogleMap.OnMapClickListener {
+open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener, GoogleMap.OnMapClickListener,
+    GoogleMap.OnMarkerClickListener {
 
     /*Map view*/
     private lateinit var mapView: MapView
@@ -67,6 +72,9 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
 
     private var isMenuList : Boolean = false
 
+    private var markerAdapter:MarkerAdapter ?=null
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +83,6 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocation()
         }
-
         setDisplaySize()
 
         initMapView()
@@ -85,6 +92,32 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         btn_menu.setOnClickListener(this)
 
         initRecyclers()
+
+        edt_search.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                Log.e("custom-mapview",s.toString())
+                val arrays :MutableList<String> = mutableListOf()
+
+                if(placesList!=null){
+                    if(!placesList!!.isEmpty()){
+                        for(i in 0..placesList!!.size-1){
+                            if(placesList!![i].name==s.toString()){
+                                arrays.add(placesList!![i].name)
+                                val adapter : SearchAdapter = recycler_search.adapter as SearchAdapter
+                                adapter.updateSearch(arrays)
+                            }
+                        }
+                    }
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+
+        })
 
         /*TODO
         * location izni alındıktan sonra onReadMapkey yapılacak.
@@ -123,6 +156,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         mMap = p0!!
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(focus,6f))
         mMap.setOnMapClickListener(this)
+        mMap.setOnMarkerClickListener(this)
     }
 
     private fun searchAnimation(){
@@ -149,8 +183,12 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                 override fun onAnimationEnd(animation: Animator?) {
                     rl_search.layoutParams.width = finishX.toInt()
                     rl_search.parent.requestLayout()
-                    recycler_search.layoutParams.height = (mheight/2.5).toInt()
-                    recycler_search.parent.requestLayout()
+                    if(placesList!=null) {
+                        if(!placesList!!.isEmpty()) {
+                            recycler_search.layoutParams.height = (mheight / 4).toInt()
+                            recycler_search.parent.requestLayout()
+                        }
+                    }
                     isSearchList=true
                 }
 
@@ -284,30 +322,6 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         menu_counter++
     }
 
-    override fun onMapClick(p0: LatLng?) {
-        if(isMenuList) {
-            menuAnimation()
-        }
-
-        if(isSearchList){
-            searchAnimation()
-        }
-    }
-
-    override fun onClick(v: View?) {
-        when(v!!.id) {
-            R.id.btn_search -> {
-                searchAnimation()
-            }
-            R.id.btn_menu ->{
-                if(placesList!=null) {
-                    if (!placesList!!.isEmpty())
-                        menuAnimation()
-                }
-            }
-        }
-    }
-
     fun addPlacesList(places: List<Place>){
         this.placesList=places
 
@@ -333,7 +347,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         val arrays :MutableList<String> = mutableListOf()
 
         for(i in 0..places.size-1) {
-           arrays.add(places[i].name)
+            arrays.add(places[i].name)
         }
 
         return arrays
@@ -342,15 +356,15 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
     private fun getMenuType(places: List<Place>): List<String> {
         val arrays :MutableList<String> = mutableListOf()
 
-            for(i in 0..places.size-1) {
-                if (!arrays.isEmpty()) {
-                    var isFound = false
-                    for (y in 0..arrays.size - 1) {
-                        if (arrays[y] == places[i].placeType.name) isFound = true
-                    }
-                    if (!isFound) arrays.add(places[i].placeType.name)
-                }else arrays.add(places[i].placeType.name)
-            }
+        for(i in 0..places.size-1) {
+            if (!arrays.isEmpty()) {
+                var isFound = false
+                for (y in 0..arrays.size - 1) {
+                    if (arrays[y] == places[i].placeType.name) isFound = true
+                }
+                if (!isFound) arrays.add(places[i].placeType.name)
+            }else arrays.add(places[i].placeType.name)
+        }
 
         return arrays
     }
@@ -423,6 +437,93 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                 })
         }
     }
+
+    private fun showPopup(marker: Marker?){
+        try {
+            if (markerAdapter != null)
+                markerAdapter!!.itemView.visibility = View.GONE
+
+            val projection: Projection = mMap.projection
+            val point: Point = projection.toScreenLocation(mMap.cameraPosition.target)
+
+            markerAdapter = MarkerAdapter(
+                this.layoutInflater.inflate(
+                    R.layout.popup,
+                    findViewById(R.id.map_parent) as RelativeLayout,
+                    false
+                ), this
+            )
+            markerAdapter!!.onBind(marker!!.snippet)
+            markerAdapter!!.itemView.alpha = 0f
+
+            (findViewById<RelativeLayout>(R.id.map_parent).addView(markerAdapter!!.itemView))
+
+            val params = markerAdapter!!.itemView.getLayoutParams() as RelativeLayout.LayoutParams
+//                params.addRule(RelativeLayout.ALIGN_TOP,R.id.center_image);
+            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+            val mar = (10 * scale.toInt())
+            params.setMargins(
+                2 * mar,
+                0,
+                2 * mar,
+                (findViewById<RelativeLayout>(R.id.map_parent) as RelativeLayout).measuredHeight - point.y + mar + (37.5 * scale).toInt()
+            )
+
+            markerAdapter!!.itemView.animate().setListener(object : AnimatorListenerAdapter() {
+
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    markerAdapter!!.itemView.visibility = View.VISIBLE
+                }
+
+                override fun onAnimationStart(animation: Animator?) {
+                    super.onAnimationStart(animation)
+                    markerAdapter!!.itemView.alpha = 1f
+                }
+
+
+            }).setStartDelay(250)
+                .alpha(1f)
+                .setDuration(150)
+                .start()
+        }catch (e:Exception){ }
+
+    }
+
+    override fun onMapClick(p0: LatLng?) {
+        if(isMenuList) {
+            menuAnimation()
+        }
+
+        if(isSearchList){
+            searchAnimation()
+        }
+
+        try{
+            markerAdapter!!.itemView.visibility=View.GONE
+        }catch (ignored:java.lang.Exception){}
+    }
+
+    override fun onClick(v: View?) {
+        when(v!!.id) {
+            R.id.btn_search -> {
+                searchAnimation()
+            }
+            R.id.btn_menu ->{
+                if(placesList!=null) {
+                    if (!placesList!!.isEmpty())
+                        menuAnimation()
+                }
+            }
+        }
+    }
+
+    override fun onMarkerClick(p0: Marker?): Boolean {
+        showPopup(p0)
+        return false
+    }
+
+
 
 
 }

@@ -40,6 +40,11 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.ViewHolder> {
 
     }
 
+    fun updateSearch(arrays: MutableList<String>) {
+        this.list = arrays
+        notifyDataSetChanged()
+    }
+
 
     class ViewHolder(
         itemView: android.view.View,
