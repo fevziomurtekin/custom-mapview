@@ -4,18 +4,18 @@ import com.fevziomurtekin.custom_mapview.util.PlaceType
 
 data class Place(
 
-    val name :String="",
+    var name :String="",
 
-    val content :String="",
+    var content :String="",
 
-    val latitude :Double=0.0,
+    var latitude :Double=0.0,
 
-    val longitude :Double=0.0,
+    var longitude :Double=0.0,
 
-    val placeType : PlaceType = PlaceType.OTHER,
+    var placeType : PlaceType = PlaceType.OTHER,
 
-    val isUrl : Boolean = false,
+    var isUrl : Boolean = false,
 
-    val url : String =""
+    var url : String =""
 
     )

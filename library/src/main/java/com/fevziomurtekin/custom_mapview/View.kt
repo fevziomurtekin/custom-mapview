@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
@@ -13,7 +14,10 @@ import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.ImageView
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.fevziomurtekin.custom_mapview.data.Place
+import com.fevziomurtekin.custom_mapview.module.GlideApp
 import com.fevziomurtekin.custom_mapview.util.PlaceType
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -193,7 +197,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
         }
     }
 
-    private fun addPlacesList(places: List<Place>){
+    public fun addPlacesList(places: List<Place>){
         this.placesList=places
 
         if(placesList!=null) {
@@ -210,56 +214,71 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener 
     }
 
     private fun setIconMarker(place: Place, markerOptions: MarkerOptions) {
-        if(!place.isUrl){
-            val icon :BitmapDescriptor
-            when(place.placeType){
-                PlaceType.OTHER->{
-                    icon = BitmapDescriptorFactory.fromResource(R.drawable.other)
+        if (!place.isUrl) {
+            val icon: Int
+            when (place.placeType) {
+                PlaceType.OTHER -> {
+                    icon = R.drawable.other
                 }
-                PlaceType.BANK->{
-                    icon = BitmapDescriptorFactory.fromResource(R.drawable.bank)
+                PlaceType.BANK -> {
+                    icon = R.drawable.bank
                 }
-                PlaceType.COFFEE->{
-                    icon = BitmapDescriptorFactory.fromResource(R.drawable.coffee)
+                PlaceType.COFFEE -> {
+                    icon = R.drawable.coffee
 
                 }
-                PlaceType.GAS_STATION->{
-                    icon = BitmapDescriptorFactory.fromResource(R.drawable.gas)
+                PlaceType.GAS_STATION -> {
+                    icon = R.drawable.gas
 
                 }
-                PlaceType.HOSPITAL->{
-                    icon = BitmapDescriptorFactory.fromResource(R.drawable.hospital)
+                PlaceType.HOSPITAL -> {
+                    icon = R.drawable.hospital
 
                 }
-                PlaceType.SCHOOL->{
-                    icon = BitmapDescriptorFactory.fromResource(R.drawable.scholl)
+                PlaceType.SCHOOL -> {
+                    icon = R.drawable.scholl
 
                 }
-                PlaceType.HOTEL->{
-                    icon = BitmapDescriptorFactory.fromResource(R.drawable.hotel)
-
+                PlaceType.HOTEL -> {
+                    icon = R.drawable.hotel
                 }
-                PlaceType.BAR->{
-                    icon = BitmapDescriptorFactory.fromResource(R.drawable.bar)
-
+                PlaceType.BAR -> {
+                    icon = R.drawable.bar
                 }
-                PlaceType.STORE->{
-                    icon = BitmapDescriptorFactory.fromResource(R.drawable.other)
-
+                PlaceType.STORE -> {
+                    icon = R.drawable.store
                 }
-                PlaceType.PARKING_AREA->{
-                    icon = BitmapDescriptorFactory.fromResource(R.drawable.park)
-
+                PlaceType.PARKING_AREA -> {
+                    icon = R.drawable.park
                 }
-                PlaceType.RESTUARANT->{
-                    icon = BitmapDescriptorFactory.fromResource(R.drawable.rest)
-
+                PlaceType.RESTUARANT -> {
+                    icon = R.drawable.rest
                 }
             }
-            markerOptions.icon(icon)
-        }else{
+
+            GlideApp.with(this)
+                .asBitmap()
+                .load(icon)
+                .override((scale * 45).toInt(), (scale * 45).toInt())
+                .into(object : SimpleTarget<Bitmap>() {
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resource))
+                        mMap.addMarker(markerOptions)
+                    }
+                })
 
 
+        } else {
+            GlideApp.with(this)
+                .asBitmap()
+                .load(place.url)
+                .override((scale * 45).toInt(), (scale * 45).toInt())
+                .into(object : SimpleTarget<Bitmap>() {
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resource))
+                        mMap.addMarker(markerOptions)
+                    }
+                })
         }
     }
 
