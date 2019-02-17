@@ -453,7 +453,12 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                     false
                 ), this
             )
-            markerAdapter!!.onBind(marker!!.snippet)
+
+            val place:Place= placesList!!.find {
+                it.name==marker!!.snippet
+            }!!
+
+            markerAdapter!!.onBind(place)
             markerAdapter!!.itemView.alpha = 0f
 
             (findViewById<RelativeLayout>(R.id.map_parent).addView(markerAdapter!!.itemView))
@@ -464,7 +469,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
             val mar = (10 * scale.toInt())
             params.setMargins(
                 2 * mar,
-                0,
+                15,
                 2 * mar,
                 (findViewById<RelativeLayout>(R.id.map_parent) as RelativeLayout).measuredHeight - point.y + mar + (37.5 * scale).toInt()
             )

@@ -5,6 +5,8 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.fevziomurtekin.custom_mapview.R
+import com.fevziomurtekin.custom_mapview.data.Place
+import java.lang.Exception
 
 class MarkerAdapter: RecyclerView.ViewHolder{
 
@@ -26,8 +28,17 @@ class MarkerAdapter: RecyclerView.ViewHolder{
         itemview.tag=act
     }
 
-    fun onBind(title:String){
-        txtInfo.text=title
+    fun onBind(place:Place){
+        try {
+            txtInfo.text = place.name
+            txtContent.text = place.content
+
+            if(place.phone!="")
+                btnPhone.tag = place.phone
+            else
+                btnPhone.isEnabled = false
+
+        }catch (e:Exception){}
     }
 
 

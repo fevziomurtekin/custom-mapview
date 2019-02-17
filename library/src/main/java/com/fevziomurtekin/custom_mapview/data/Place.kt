@@ -16,6 +16,8 @@ data class Place(
 
     var isUrl : Boolean = false,
 
-    var url : String =""
+    var url : String ="",
+
+    var phone : String =""
 
     )
