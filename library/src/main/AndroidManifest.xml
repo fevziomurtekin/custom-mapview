@@ -10,7 +10,8 @@
             android:required="true" />
 
     <application>
-        <activity android:name=".View"/>
+        <activity android:name=".View"
+                  android:windowSoftInputMode="stateHidden|adjustPan"/>
         <uses-library android:required="true" android:name="com.google.android.maps" />
     </application>
 
