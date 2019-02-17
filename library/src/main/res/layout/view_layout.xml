@@ -23,7 +23,7 @@
                 android:id="@+id/btn_target"
                 android:src="@drawable/target"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
+                android:layout_alignParentTop="true"
                 android:padding="5dp"/>
 
         <ImageView
@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/btn_search"
                 android:padding="5dp"
-                android:layout_centerVertical="true"
+                android:layout_alignParentTop="true"
                 android:layout_toLeftOf="@id/btn_target"
                 android:src="@drawable/search"
                 />

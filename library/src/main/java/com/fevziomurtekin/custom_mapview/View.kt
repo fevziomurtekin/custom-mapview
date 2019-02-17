@@ -17,6 +17,7 @@ import android.widget.LinearLayout
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.fevziomurtekin.custom_mapview.Adapter.MenuAdapter
+import com.fevziomurtekin.custom_mapview.Adapter.SearchAdapter
 import com.fevziomurtekin.custom_mapview.data.Place
 import com.fevziomurtekin.custom_mapview.module.GlideApp
 import com.fevziomurtekin.custom_mapview.util.PlaceType
@@ -148,6 +149,8 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                 override fun onAnimationEnd(animation: Animator?) {
                     rl_search.layoutParams.width = finishX.toInt()
                     rl_search.parent.requestLayout()
+                    recycler_search.layoutParams.height = (mheight/2.5).toInt()
+                    recycler_search.parent.requestLayout()
                     isSearchList=true
                 }
 
@@ -176,6 +179,8 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
             scaleX.addUpdateListener {
                 rl_search.layoutParams.width = (it.animatedValue as Float).toInt()
                 rl_search.parent.requestLayout()
+                recycler_search.layoutParams.height = 0
+                recycler_search.parent.requestLayout()
             }
 
             scaleX.addListener(object :Animator.AnimatorListener{
@@ -320,11 +325,22 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
 
         recycler_place_type.adapter = MenuAdapter(getMenuType(places),this)
 
+        recycler_search.adapter = SearchAdapter(getSearchType(places),this)
+
+    }
+
+    private fun getSearchType(places: List<Place>): List<String> {
+        val arrays :MutableList<String> = mutableListOf()
+
+        for(i in 0..places.size-1) {
+           arrays.add(places[i].name)
+        }
+
+        return arrays
     }
 
     private fun getMenuType(places: List<Place>): List<String> {
         val arrays :MutableList<String> = mutableListOf()
-
 
             for(i in 0..places.size-1) {
                 if (!arrays.isEmpty()) {
