@@ -6,4 +6,6 @@
     <color name="stroke_nfocused_color">#000099</color>
     <color name="blue">#0000b2</color>
     <color name="black10">#99000000</color>
+    <color name="red">#FF0000</color>
+    <color name="green">#008000</color>
 </resources>

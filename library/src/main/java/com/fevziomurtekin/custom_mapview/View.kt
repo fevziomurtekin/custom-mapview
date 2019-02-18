@@ -3,14 +3,18 @@ package com.fevziomurtekin.custom_mapview
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Point
+import android.location.Location
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
@@ -151,9 +155,8 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun checkLocation(){
-        if(this.checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED
-            && this.checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
-            this.requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION), LOCATION)
+        if(this.checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+            this.requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION)
         }
     }
 
@@ -520,6 +523,17 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         startActivity(intent)
     }
 
+    private fun checkGps(){
+
+        val locationManager:LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+
+        }
+
+
+    }
+
     override fun onClick(v: View?) {
         when(v!!.id) {
             R.id.btn_search -> {
@@ -567,10 +581,13 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when(requestCode){
             LOCATION->{
+                if(grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                    checkGps()
+                }
 
             }
             PHONE->{
-                if (this.checkSelfPermission(android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                if (grantResults[0]!= PackageManager.PERMISSION_GRANTED) {
                     callPhone()
                 }
             }

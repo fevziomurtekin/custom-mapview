@@ -2,4 +2,10 @@
     <string name="app_name">library</string>
     <string name="default_hint">Search any place.</string>
     <string name="default_menu">All</string>
+    <string name="warning">WARNING!</string>
+    <string name="location_info">You need to open the gps in order to bring the location to the map. Would you like to
+        let us open the GPS?
+    </string>
+    <string name="dismiss">Dismiss</string>
+    <string name="allow">Allow</string>
 </resources>
