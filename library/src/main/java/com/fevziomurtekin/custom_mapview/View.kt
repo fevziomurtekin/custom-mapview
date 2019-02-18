@@ -3,18 +3,19 @@ package com.fevziomurtekin.custom_mapview
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Point
 import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
@@ -32,16 +33,16 @@ import com.fevziomurtekin.custom_mapview.Adapter.MenuAdapter
 import com.fevziomurtekin.custom_mapview.Adapter.SearchAdapter
 import com.fevziomurtekin.custom_mapview.data.Place
 import com.fevziomurtekin.custom_mapview.module.GlideApp
+import com.fevziomurtekin.custom_mapview.util.Dialogs
 import com.fevziomurtekin.custom_mapview.util.PlaceType
 import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.view_layout.*
 
 const val LOCATION = 1001
 const val PHONE = 1002
+const val LOCATION_REFRESH_TIME=300
+const val LOCATION_REFRESH_DISTANCE=300
 
 open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener, GoogleMap.OnMapClickListener,
     GoogleMap.OnMarkerClickListener {
@@ -83,7 +84,9 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
 
     private var phone:String =""
 
+    private var currentMarker: MarkerOptions? =null
 
+    private  var current_latlng:LatLng ?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,9 +112,9 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
 
                 if(placesList!=null){
                     if(!placesList!!.isEmpty()){
-                        for(i in 0..placesList!!.size-1){
-                            if(placesList!![i].name==s.toString()){
-                                arrays.add(placesList!![i].name)
+                        for(place in placesList!!){
+                            if(place.name==s.toString()){
+                                arrays.add(place.name)
                                 val adapter : SearchAdapter = recycler_search.adapter as SearchAdapter
                                 adapter.updateSearch(arrays)
                             }
@@ -128,11 +131,10 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
 
         })
 
-        /*TODO
-        * location izni alındıktan sonra onReadMapkey yapılacak.
-        * Search işleminin ve popup işleminin animasyonu yapılacak.
-        * arama kısmında ve menu kısmındaki açılır liste animasyonu yapılacak.*/
     }
+
+
+
 
     private fun initRecyclers() {
         recycler_search.layoutManager = LinearLayoutManager(this,LinearLayout.VERTICAL,false)
@@ -161,10 +163,32 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
     }
 
     override fun onMapReady(p0: GoogleMap?) {
+        /*MapsInitializer.initialize(getApplicationContext())*/
+        MapsInitializer.initialize(applicationContext)
         mMap = p0!!
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(focus,6f))
         mMap.setOnMapClickListener(this)
         mMap.setOnMarkerClickListener(this)
+
+        /*user current Location then add marker.*/
+
+        mMap.setOnMyLocationChangeListener { object : GoogleMap.OnMyLocationChangeListener{
+            override fun onMyLocationChange(p0: Location?) {
+                if(currentMarker==null){
+                    currentMarker = MarkerOptions()
+                        .title("")
+                        .snippet("Me")
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.user))
+                        .position(LatLng(p0!!.latitude,p0!!.longitude))
+                        .draggable(false)
+
+                    mMap.addMarker(currentMarker)
+                }else{
+                    currentMarker!!.position(LatLng(p0!!.latitude,p0!!.longitude))
+                }
+            }
+
+        }}
     }
 
     private fun searchAnimation(){
@@ -258,7 +282,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
 
     private fun menuAnimation(){
         var startX :Float = 0F
-        var finishX :Float = (mheight/1.85).toFloat()
+        var finishX :Float = (mheight/2.25).toFloat()
 
         if(menu_counter%2==0){ //show animation.
 
@@ -334,14 +358,14 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         this.placesList=places
 
         if(placesList!=null) {
-            for (i in 0..placesList!!.size - 1) {
+            for (place in placesList!!) {
                 val markerOptions : MarkerOptions = MarkerOptions()
-                    .snippet(placesList!![i].name)
-                    .position(LatLng(placesList!![i].latitude,placesList!![i].longitude))
+                    .snippet(place.name)
+                    .position(LatLng(place.latitude,place.longitude))
                     .title("")
                     .draggable(false)
 
-                setIconMarker(placesList!![i],markerOptions)
+                setIconMarker(place,markerOptions)
             }
         }
 
@@ -354,8 +378,10 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
     private fun getSearchType(places: List<Place>): List<String> {
         val arrays :MutableList<String> = mutableListOf()
 
-        for(i in 0..places.size-1) {
-            arrays.add(places[i].name)
+        if(placesList!=null) {
+            for (place in placesList!!) {
+                arrays.add(place.name)
+            }
         }
 
         return arrays
@@ -364,14 +390,14 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
     private fun getMenuType(places: List<Place>): List<String> {
         val arrays :MutableList<String> = mutableListOf()
 
-        for(i in 0..places.size-1) {
+        for(place in places) {
             if (!arrays.isEmpty()) {
                 var isFound = false
                 for (y in 0..arrays.size - 1) {
-                    if (arrays[y] == places[i].placeType.name) isFound = true
+                    if (arrays[y] ==place.placeType.name) isFound = true
                 }
-                if (!isFound) arrays.add(places[i].placeType.name)
-            }else arrays.add(places[i].placeType.name)
+                if (!isFound) arrays.add(place.placeType.name)
+            }else arrays.add(place.placeType.name)
         }
 
         return arrays
@@ -420,14 +446,16 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                 }
             }
 
-            GlideApp.with(this)
+            GlideApp.with(this.applicationContext)
                 .asBitmap()
                 .load(icon)
                 .override((scale * 40).toInt(), (scale * 40).toInt())
                 .into(object : SimpleTarget<Bitmap>() {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resource))
-                        mMap.addMarker(markerOptions)
+                        try {
+                            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resource))
+                            mMap.addMarker(markerOptions)
+                        }catch (e:java.lang.Exception){}
                     }
                 })
 
@@ -439,8 +467,10 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                 .override((scale * 40).toInt(), (scale * 40).toInt())
                 .into(object : SimpleTarget<Bitmap>() {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resource))
-                        mMap.addMarker(markerOptions)
+                        try {
+                            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resource))
+                            mMap.addMarker(markerOptions)
+                        }catch (e:java.lang.Exception){}
                     }
                 })
         }
@@ -528,7 +558,23 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         val locationManager:LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            Dialogs.gpsCreate(this,View.OnClickListener{
+                val dialog: Dialog
+                when(it.id){
+                    R.id.btn_deny->{
+                        dialog = it.tag as Dialog
+                        dialog.dismiss()
+                    }
+                    R.id.btn_allow->{
+                        dialog = it.tag as Dialog
+                        dialog.dismiss()
+                        val callGPSSettingIntent
+                                = Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                        startActivity(callGPSSettingIntent)
+                    }
+                }
 
+            })
         }
 
 

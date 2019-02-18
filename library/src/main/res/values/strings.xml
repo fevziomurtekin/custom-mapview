@@ -6,6 +6,6 @@
     <string name="location_info">You need to open the gps in order to bring the location to the map. Would you like to
         let us open the GPS?
     </string>
-    <string name="dismiss">Dismiss</string>
+    <string name="deny">Deny</string>
     <string name="allow">Allow</string>
 </resources>
