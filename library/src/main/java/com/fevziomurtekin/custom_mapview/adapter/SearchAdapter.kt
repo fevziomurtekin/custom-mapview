@@ -7,17 +7,18 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.fevziomurtekin.custom_mapview.R
 import com.fevziomurtekin.custom_mapview.View
+import com.fevziomurtekin.custom_mapview.data.Place
 
 
 class SearchAdapter : RecyclerView.Adapter<SearchAdapter.ViewHolder> {
 
-    private var list: List<String> = ArrayList()
+    private var list: List<Place> = ArrayList()
 
     private var activity: View? = null
 
     private var onClickListener: android.view.View.OnClickListener? = null
 
-    constructor(list: List<String>, onClickListener: android.view.View.OnClickListener) {
+    constructor(list: List<Place>, onClickListener: android.view.View.OnClickListener) {
         this.list = list
         this.onClickListener = onClickListener
 
@@ -34,13 +35,13 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.ViewHolder> {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        holder.txt_search_item.text = list.get(position)
+        holder.txt_search_item.text = list.get(position).name
 
         holder.btn_search_item.tag = list.get(position)
 
     }
 
-    fun updateSearch(arrays: MutableList<String>) {
+    fun updateSearch(arrays: MutableList<Place>) {
         this.list = arrays
         notifyDataSetChanged()
     }

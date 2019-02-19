@@ -113,13 +113,13 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         edt_search.addTextChangedListener(object : TextWatcher{
             override fun afterTextChanged(s: Editable?) {
                 Log.e("custom-mapview",s.toString())
-                val arrays :MutableList<String> = mutableListOf()
+                val arrays :MutableList<Place> = mutableListOf()
 
                 if(placesList!=null){
                     if(!placesList!!.isEmpty()){
                         for(place in placesList!!){
                             if(place.name==s.toString()){
-                                arrays.add(place.name)
+                                arrays.add(place)
                                 val adapter : SearchAdapter = recycler_search.adapter as SearchAdapter
                                 adapter.updateSearch(arrays)
                             }
@@ -135,7 +135,6 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
             }
 
         })
-
 
     }
 
@@ -395,21 +394,10 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
 
         recycler_place_type.adapter = MenuAdapter(getMenuType(places),this)
 
-        recycler_search.adapter = SearchAdapter(getSearchType(places),this)
+        recycler_search.adapter = SearchAdapter(places,this)
 
     }
 
-    private fun getSearchType(places: List<Place>): List<String> {
-        val arrays :MutableList<String> = mutableListOf()
-
-        if(placesList!=null) {
-            for (place in placesList!!) {
-                arrays.add(place.name)
-            }
-        }
-
-        return arrays
-    }
 
     private fun getMenuType(places: List<Place>): List<String> {
         val arrays :MutableList<String> = mutableListOf()
@@ -647,12 +635,34 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                 if(current_latlng.latitude!=0.toDouble() && current_latlng.longitude!=0.toDouble()){
                     moveMap(current_latlng)
                 }
+            }
+
+            R.id.btn_search_item->{
+                val place = v.tag as Place
+
+                if(isMenuList) {
+                    menuAnimation()
+                }
+
+                if(isSearchList){
+                    searchAnimation()
+                }
+
+                moveMap(LatLng(place.latitude,place.longitude))
+
 
             }
         }
     }
 
     override fun onMarkerClick(p0: Marker?): Boolean {
+        if(isMenuList) {
+            menuAnimation()
+        }
+
+        if(isSearchList){
+            searchAnimation()
+        }
         showPopup(p0)
         return false
     }
