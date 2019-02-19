@@ -1,7 +1,9 @@
 ## Custom MapView
 🗺️ A customized Android library made using Google map.
 
-!(image)[https://media.giphy.com/media/WgTLhbSWRXh2aNqcrI/giphy.gif]
+<p align="center">
+<img align="center" src="/art/map.gif" width="300" height="450" />
+</p>
 
 # Usage
 
@@ -15,7 +17,7 @@
   
   .....
     dependencies {
-	    implementation 'com.github.fevziomurtekin:lockscreen:0.1.1'
+	    implementation 'com.github.fevziomurtekin..'
 	  }
 	}
   ```
