@@ -22,10 +22,11 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.view.animation.LinearInterpolator
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
+import android.view.inputmethod.EditorInfo
+import android.widget.*
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.fevziomurtekin.custom_mapview.adapter.MarkerAdapter
@@ -35,6 +36,7 @@ import com.fevziomurtekin.custom_mapview.data.Place
 import com.fevziomurtekin.custom_mapview.module.GlideApp
 import com.fevziomurtekin.custom_mapview.util.Dialogs
 import com.fevziomurtekin.custom_mapview.util.PlaceType
+import com.fevziomurtekin.custom_mapview.util.Util
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
@@ -92,6 +94,10 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
+    private var activity:com.fevziomurtekin.custom_mapview.View=this
+
+    private val defaultSearchError="The location you were looking for was not found on the map."
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -134,6 +140,17 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
 
+        })
+
+        edt_search.setOnEditorActionListener(object : TextView.OnEditorActionListener{
+            override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+                if(actionId==EditorInfo.IME_ACTION_SEARCH){
+                    Util.hideKeyboard(activity)
+                    searchPlace()
+                    return true
+                }
+                return false
+            }
         })
 
     }
@@ -398,7 +415,6 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
 
     }
 
-
     private fun getMenuType(places: List<Place>): List<String> {
         val arrays :MutableList<String> = mutableListOf()
 
@@ -545,6 +561,30 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
 
     }
 
+    private fun searchPlace(){
+
+        val search = edt_search.text.toString()
+        var isFound = false
+
+        if(isMenuList) {
+            menuAnimation()
+        }
+
+        if(isSearchList){
+            searchAnimation()
+        }
+
+        if(placesList!=null){
+            for(place in placesList!!){
+                if(place.name.trim().toLowerCase()==search.trim().toLowerCase()) {
+                    isFound=true
+                    moveMap(LatLng(place.latitude, place.longitude))
+                }
+            }
+            if(!isFound) Toast.makeText(activity,defaultSearchError,Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun moveMap(location:LatLng){
         mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(location,15f))
     }
@@ -649,7 +689,6 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                 }
 
                 moveMap(LatLng(place.latitude,place.longitude))
-
 
             }
         }
