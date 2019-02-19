@@ -13,7 +13,7 @@
             android:background="@drawable/title_bg"
             android:id="@+id/txt_title"
             android:textColor="@color/white"
-            tools:text="@string/warning"
+            android:text="@string/warning"
             android:textSize="15sp"
             android:padding="5dp"/>
 

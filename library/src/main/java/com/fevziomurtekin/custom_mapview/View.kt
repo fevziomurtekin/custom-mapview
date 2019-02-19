@@ -74,7 +74,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
     private var menuAnimation_time = 300
 
     /*Places list added in Activity*/
-    private var placesList : List<Place>? = null
+    private var placesList : MutableList<Place>? = null
 
     private var isSearchList : Boolean = false
 
@@ -160,6 +160,11 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        getLastLocation()
+    }
+
     private fun initRecyclers() {
         recycler_search.layoutManager = LinearLayoutManager(this,LinearLayout.VERTICAL,false)
         recycler_place_type.layoutManager = LinearLayoutManager(this,LinearLayout.VERTICAL,false)
@@ -196,30 +201,24 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
             if(location!=null){
 
                 current_latlng = LatLng(location.latitude,location.longitude)
+                currentMarker = MarkerOptions()
+                    .title("")
+                    .snippet("Me")
+                    .position(current_latlng!!)
+                    .draggable(false)
 
-                if(currentMarker==null){
-                    currentMarker = MarkerOptions()
-                        .title("")
-                        .snippet("Me")
-                        .position(current_latlng!!)
-                        .draggable(false)
-
-                    GlideApp.with(this.applicationContext)
-                        .asBitmap()
-                        .load(R.drawable.user)
-                        .override((scale * 30).toInt(), (scale * 30).toInt())
-                        .into(object : SimpleTarget<Bitmap>() {
-                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                try {
-                                    currentMarker?.icon(BitmapDescriptorFactory.fromBitmap(resource))
-                                    mMap.addMarker(currentMarker)
-                                }catch (e:java.lang.Exception){}
-                            }
-                        })
-                }else{
-                    currentMarker!!.position(current_latlng!!)
-                }
-
+                GlideApp.with(this.applicationContext)
+                    .asBitmap()
+                    .load(R.drawable.user)
+                    .override((scale * 30).toInt(), (scale * 30).toInt())
+                    .into(object : SimpleTarget<Bitmap>() {
+                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                            try {
+                                currentMarker?.icon(BitmapDescriptorFactory.fromBitmap(resource))
+                                mMap.addMarker(currentMarker)
+                            }catch (e:java.lang.Exception){}
+                        }
+                    })
             }
         }
     }
@@ -399,7 +398,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         menu_counter++
     }
 
-    fun addPlacesList(places: List<Place>){
+    fun addPlacesList(places: MutableList<Place>){
         tempPlaceList.clear()
         this.placesList=places
 
@@ -567,8 +566,8 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
             searchAnimation()
         }
 
-        if(placesList!=null){
-            for(place in placesList!!){
+        if(tempPlaceList!=null){
+            for(place in tempPlaceList!!){
                 if(place.name.trim().toLowerCase()==search.trim().toLowerCase()) {
                     isFound=true
                     moveMap(LatLng(place.latitude, place.longitude))
@@ -585,6 +584,8 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         mMap.clear()
         markerList.clear()
 
+        getLastLocation()
+
         if(menu==getString(R.string.default_menu)){
             for(place in tempPlaceList){
                 val marker : MarkerOptions = MarkerOptions()
@@ -595,7 +596,6 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                 markerList.add(marker)
                 setIconMarker(place,marker)
             }
-
         }else{
             for(place in places){
                 val marker : MarkerOptions = MarkerOptions()
@@ -607,9 +607,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                 setIconMarker(place,marker)
             }
         }
-
         centerToMap(markerList)
-
     }
 
     private fun centerToMap(markerList: MutableList<MarkerOptions>){
@@ -721,6 +719,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
 
             R.id.btn_search_item->{
                 val place = v.tag as Place
+                updateMarker(tempPlaceList,getString(R.string.default_menu))
                 moveMap(LatLng(place.latitude,place.longitude))
 
             }
@@ -735,8 +734,6 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                 btn_menu.text=menu
 
                 updateMarker(places,menu)
-
-
             }
 
         }
@@ -768,7 +765,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
 
             }
             PHONE->{
-                if (grantResults[0]!= PackageManager.PERMISSION_GRANTED) {
+                if (grantResults[0]== PackageManager.PERMISSION_GRANTED) {
                     callPhone()
                 }
             }
