@@ -1,14 +1,12 @@
-package com.fevziomurtekin.custom_mapview.Adapter
+package com.fevziomurtekin.custom_mapview.adapter
 
 import android.support.v7.widget.RecyclerView
 import com.fevziomurtekin.custom_mapview.View
-import com.fevziomurtekin.custom_mapview.data.Place
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.fevziomurtekin.custom_mapview.R
-import org.w3c.dom.Text
 
 
 class MenuAdapter : RecyclerView.Adapter<MenuAdapter.ViewHolder>{

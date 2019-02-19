@@ -8,9 +8,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Camera
 import android.graphics.Point
 import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
@@ -28,13 +28,15 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.fevziomurtekin.custom_mapview.Adapter.MarkerAdapter
-import com.fevziomurtekin.custom_mapview.Adapter.MenuAdapter
-import com.fevziomurtekin.custom_mapview.Adapter.SearchAdapter
+import com.fevziomurtekin.custom_mapview.adapter.MarkerAdapter
+import com.fevziomurtekin.custom_mapview.adapter.MenuAdapter
+import com.fevziomurtekin.custom_mapview.adapter.SearchAdapter
 import com.fevziomurtekin.custom_mapview.data.Place
 import com.fevziomurtekin.custom_mapview.module.GlideApp
 import com.fevziomurtekin.custom_mapview.util.Dialogs
 import com.fevziomurtekin.custom_mapview.util.PlaceType
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.view_layout.*
@@ -86,7 +88,10 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
 
     private var currentMarker: MarkerOptions? =null
 
-    private  var current_latlng:LatLng ?=null
+    private var current_latlng:LatLng = LatLng(0.0,0.0)
+
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,7 +105,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         initMapView()
 
         btn_search.setOnClickListener(this)
-
+        btn_target.setOnClickListener(this)
         btn_menu.setOnClickListener(this)
 
         initRecyclers()
@@ -131,10 +136,8 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
 
         })
 
+
     }
-
-
-
 
     private fun initRecyclers() {
         recycler_search.layoutManager = LinearLayoutManager(this,LinearLayout.VERTICAL,false)
@@ -153,12 +156,50 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         mapView.onCreate(null)
         mapView.onResume()
         mapView.getMapAsync(this)
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        try{ getLastLocation() }catch (e:java.lang.Exception){}
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun checkLocation(){
-        if(this.checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
-            this.requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION)
+        if(this.checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED
+            && this.checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+            this.requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION), LOCATION)
+        }
+    }
+
+    private fun getLastLocation(){
+        fusedLocationProviderClient.lastLocation.addOnSuccessListener(this){
+            location ->
+
+            if(location!=null){
+
+                current_latlng = LatLng(location.latitude,location.longitude)
+
+                if(currentMarker==null){
+                    currentMarker = MarkerOptions()
+                        .title("")
+                        .snippet("Me")
+                        .position(current_latlng!!)
+                        .draggable(false)
+
+                    GlideApp.with(this.applicationContext)
+                        .asBitmap()
+                        .load(R.drawable.user)
+                        .override((scale * 30).toInt(), (scale * 30).toInt())
+                        .into(object : SimpleTarget<Bitmap>() {
+                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                try {
+                                    currentMarker?.icon(BitmapDescriptorFactory.fromBitmap(resource))
+                                    mMap.addMarker(currentMarker)
+                                }catch (e:java.lang.Exception){}
+                            }
+                        })
+                }else{
+                    currentMarker!!.position(current_latlng!!)
+                }
+
+            }
         }
     }
 
@@ -167,28 +208,11 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         MapsInitializer.initialize(applicationContext)
         mMap = p0!!
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(focus,6f))
+        //mMap.isMyLocationEnabled=true
         mMap.setOnMapClickListener(this)
         mMap.setOnMarkerClickListener(this)
 
-        /*user current Location then add marker.*/
 
-        mMap.setOnMyLocationChangeListener { object : GoogleMap.OnMyLocationChangeListener{
-            override fun onMyLocationChange(p0: Location?) {
-                if(currentMarker==null){
-                    currentMarker = MarkerOptions()
-                        .title("")
-                        .snippet("Me")
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.user))
-                        .position(LatLng(p0!!.latitude,p0!!.longitude))
-                        .draggable(false)
-
-                    mMap.addMarker(currentMarker)
-                }else{
-                    currentMarker!!.position(LatLng(p0!!.latitude,p0!!.longitude))
-                }
-            }
-
-        }}
     }
 
     private fun searchAnimation(){
@@ -405,7 +429,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
 
     private fun setIconMarker(place: Place, markerOptions: MarkerOptions) {
         if (!place.isUrl) {
-            val icon: Int
+            var icon: Int = 0
             when (place.placeType) {
                 PlaceType.OTHER -> {
                     icon = R.drawable.other
@@ -449,7 +473,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
             GlideApp.with(this.applicationContext)
                 .asBitmap()
                 .load(icon)
-                .override((scale * 40).toInt(), (scale * 40).toInt())
+                .override((scale * 30).toInt(), (scale * 30).toInt())
                 .into(object : SimpleTarget<Bitmap>() {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                         try {
@@ -464,7 +488,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
             GlideApp.with(this)
                 .asBitmap()
                 .load(place.url)
-                .override((scale * 40).toInt(), (scale * 40).toInt())
+                .override((scale * 30).toInt(), (scale * 30).toInt())
                 .into(object : SimpleTarget<Bitmap>() {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                         try {
@@ -531,6 +555,10 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                 .start()
         }catch (e:Exception){ }
 
+    }
+
+    private fun moveMap(location:LatLng){
+        mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(location,15f))
     }
 
     override fun onMapClick(p0: LatLng?) {
@@ -614,6 +642,13 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
             R.id.btn_way->{
 
             }
+
+            R.id.btn_target->{
+                if(current_latlng.latitude!=0.toDouble() && current_latlng.longitude!=0.toDouble()){
+                    moveMap(current_latlng)
+                }
+
+            }
         }
     }
 
@@ -627,8 +662,11 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when(requestCode){
             LOCATION->{
-                if(grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                if(grantResults[0]==PackageManager.PERMISSION_GRANTED
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED){
                     checkGps()
+                    getLastLocation()
+
                 }
 
             }
@@ -639,6 +677,5 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
             }
         }
     }
-
 
 }

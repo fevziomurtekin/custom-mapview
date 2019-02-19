@@ -1,4 +1,4 @@
-package com.fevziomurtekin.custom_mapview.Adapter
+package com.fevziomurtekin.custom_mapview.adapter
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
