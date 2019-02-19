@@ -128,7 +128,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                 if(placesList!=null){
                     if(!placesList!!.isEmpty()){
                         for(place in placesList!!){
-                            if(place.name==s.toString()){
+                            if(place.name.contains(s.toString())){
                                 arrays.add(place)
                                 val adapter : SearchAdapter = recycler_search.adapter as SearchAdapter
                                 adapter.updateSearch(arrays)
@@ -706,7 +706,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
     }
 
     override fun onClick(v: View?) {
-
+        Util.hideKeyboard(activity)
         when(v!!.id) {
             R.id.btn_search -> {
                 searchAnimation()
