@@ -38,6 +38,8 @@ class MarkerAdapter: RecyclerView.ViewHolder{
             else
                 btnPhone.isEnabled = false
 
+            btnWay.tag = place
+
         }catch (e:Exception){}
     }
 

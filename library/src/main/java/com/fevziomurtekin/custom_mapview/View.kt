@@ -101,7 +101,6 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
     private var tempPlaceList:MutableList<Place> = mutableListOf()
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.view_layout)
@@ -233,6 +232,25 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         mMap.setOnMarkerClickListener(this)
 
 
+    }
+
+    private fun drawLine(place: Place){
+
+        val mList : MutableList<MarkerOptions> = mutableListOf()
+        val poly : PolylineOptions=PolylineOptions()
+            .color(this.resources.getColor(R.color.blue))
+            .add(current_latlng,LatLng(place.latitude,place.longitude))
+
+        mMap.addPolyline(poly)
+
+        mList.add(MarkerOptions()
+            .title("")
+            .position(LatLng(place.latitude,place.longitude)))
+        mList.add(MarkerOptions()
+            .title("")
+            .position(current_latlng))
+
+        centerToMap(mList)
     }
 
     private fun searchAnimation(){
@@ -708,16 +726,21 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                 }
             }
             R.id.btn_way->{
-
+                try{markerAdapter?.itemView!!.visibility=View.GONE}catch (e:java.lang.Exception){}
+                getLastLocation()
+                val place = v.tag as Place
+                drawLine(place)
             }
 
             R.id.btn_target->{
+                try{markerAdapter?.itemView!!.visibility=View.GONE}catch (e:java.lang.Exception){}
                 if(current_latlng.latitude!=0.toDouble() && current_latlng.longitude!=0.toDouble()){
                     moveMap(current_latlng)
                 }
             }
 
             R.id.btn_search_item->{
+                try{markerAdapter?.itemView!!.visibility=View.GONE}catch (e:java.lang.Exception){}
                 val place = v.tag as Place
                 updateMarker(tempPlaceList,getString(R.string.default_menu))
                 moveMap(LatLng(place.latitude,place.longitude))
@@ -725,6 +748,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
             }
 
             R.id.btn_menu_item->{
+                try{markerAdapter?.itemView!!.visibility=View.GONE}catch (e:java.lang.Exception){}
                 val menu = v.tag as String
                 val places:List<Place> = Util.getPlaces(menu,placesList)
                 val adapter : MenuAdapter = recycler_place_type.adapter as MenuAdapter
