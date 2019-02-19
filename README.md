@@ -76,7 +76,9 @@
 | `defauiltSearchError` | The value in string of the message items (by default "The location you were looking for was not found on the map.")  |
 | `focus` | The location in LatLng of the location (by default 39.92077,32.85411) |
 
-> To add new places to the map, a list derived from the "Palace" class must be submitted.
+> To add new places to the map, a list derived from the Place class must be submitted.
+
+### PlaceList
 
 | Key | Value |
 | --- | --- |
