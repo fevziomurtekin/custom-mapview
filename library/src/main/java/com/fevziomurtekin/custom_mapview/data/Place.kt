@@ -14,9 +14,9 @@ data class Place(
 
     var placeType : PlaceType = PlaceType.OTHER,
 
-    var isUrl : Boolean = false,
-
     var url : String ="",
+
+    var resource : Int = -1,
 
     var phone : String =""
 

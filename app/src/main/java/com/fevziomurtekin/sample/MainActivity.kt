@@ -19,7 +19,6 @@ class MainActivity : View() {
         val school:Place = Place()
         school.name="Uludag University"
         school.placeType=PlaceType.SCHOOL
-        school.isUrl=false
         /*40.234583,28.8812533*/
         school.latitude=40.234583
         school.longitude=28.8812533
@@ -31,7 +30,6 @@ class MainActivity : View() {
         val uludag:Place = Place()
         uludag.name="Uludağ National Park"
         uludag.placeType=PlaceType.PARKING_AREA
-        uludag.isUrl=true
         uludag.url="https://cdn4.vectorstock.com/i/1000x1000/22/63/mountain-icons-on-white-background-vector-21032263.jpg"
         uludag.content=""
         /*40.112148,29.0715413*/
@@ -41,7 +39,7 @@ class MainActivity : View() {
         val ulucamii:Place = Place()
         ulucamii.name="Ulu Camii Mosque"
         ulucamii.placeType=PlaceType.MOSQUE
-        ulucamii.isUrl=false
+        ulucamii.resource=R.drawable.mosque
         ulucamii.content="1395-1399 yılları arasında Yıldırım Bayezid tarafından Bursa'da yaptırılan cami, Bursa'daki mimari eserlerin en büyüğüdür. Cami kapısının üzerinde İvaz Paşa'nın adı bulunmaktadır. \n" +
                 "\n" +
                 "Paye ve sütunlu olan düz çatı ile örülen Selçuklu camiilerinin kubbeli düzene çevrilmiş ilk örneklerindendir. 56x68 m boyutlarındadır. 12 Paye ile, 5 nefe bölünmüştür. 20 kubbesi vardır. Üzeri açık kubbenin altında bir şadırvan vardır. Şadırvanın çevresinde Kur'an okumak için ayrılmış sofalar vardır. "
@@ -52,7 +50,6 @@ class MainActivity : View() {
         val anitkabir:Place = Place()
         anitkabir.name="Anıtkabir"
         anitkabir.placeType=PlaceType.HEART
-        anitkabir.isUrl=false
         anitkabir.content="Atatürk bir devri açıp yeni bir düzeni getirdikten sonra 10 Kasım 1938'de öldüğünde, geçici olarak Etnografya Müzesi'ne defnedildi. Uygun bir anıt yeri aranmasına hemen başlandı ve Ankara'nın kente egemen bir tepesi olan Rasattepe uygun görüldü. Anıtkabir'in projesi bir yarışmayla belirlendi. Bu amaçla açılan yarışmada Emin Onat ve Orhan Arda'nın projesi başarılı görülerek uygulanmasına karar verildi.\n" +
                 "\n" +
                 "Anıtkabir bugünkü adı Anıttepe olan yerde 15 bin metrekarelik bir alanda yapıldı. Yapımında Çankırı'nın açık sarı ve gri travertenleri kullanıldı.\n" +

@@ -453,7 +453,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
     protected fun setMenuAnimation_time(menuAnimation_time:Int){this.menuAnimation_time=menuAnimation_time}
 
     private fun setIconMarker(place: Place, markerOptions: MarkerOptions) {
-        if (!place.isUrl) {
+        if (place.resource==-1 && place.url=="") {
             var icon: Int = 0
             when (place.placeType) {
                 PlaceType.OTHER -> {
@@ -524,10 +524,23 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                 })
 
 
-        } else {
+        } else if(place.resource==-1 && place.url!=""){
             GlideApp.with(this)
                 .asBitmap()
                 .load(place.url)
+                .override((scale * 30).toInt(), (scale * 30).toInt())
+                .into(object : SimpleTarget<Bitmap>() {
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        try {
+                            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(resource))
+                            mMap.addMarker(markerOptions)
+                        }catch (e:java.lang.Exception){}
+                    }
+                })
+        }else{
+            GlideApp.with(this)
+                .asBitmap()
+                .load(place.resource)
                 .override((scale * 30).toInt(), (scale * 30).toInt())
                 .into(object : SimpleTarget<Bitmap>() {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
