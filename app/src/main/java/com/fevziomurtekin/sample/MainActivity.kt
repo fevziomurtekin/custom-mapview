@@ -37,6 +37,32 @@ class MainActivity : View() {
         uludag.latitude=40.112148
         uludag.longitude=29.0715413
 
+        val ulucamii:Place = Place()
+        ulucamii.name="Ulu Camii Mosque"
+        ulucamii.placeType=PlaceType.MOSQUE
+        ulucamii.isUrl=false
+        ulucamii.content="1395-1399 yılları arasında Yıldırım Bayezid tarafından Bursa'da yaptırılan cami, Bursa'daki mimari eserlerin en büyüğüdür. Cami kapısının üzerinde İvaz Paşa'nın adı bulunmaktadır. \n" +
+                "\n" +
+                "Paye ve sütunlu olan düz çatı ile örülen Selçuklu camiilerinin kubbeli düzene çevrilmiş ilk örneklerindendir. 56x68 m boyutlarındadır. 12 Paye ile, 5 nefe bölünmüştür. 20 kubbesi vardır. Üzeri açık kubbenin altında bir şadırvan vardır. Şadırvanın çevresinde Kur'an okumak için ayrılmış sofalar vardır. "
+        /*40.184151, 29.061927*/
+        ulucamii.latitude=40.18415
+        ulucamii.longitude=29.061927
+
+        val anitkabir:Place = Place()
+        anitkabir.name="Anıtkabir"
+        anitkabir.placeType=PlaceType.HEART
+        anitkabir.isUrl=false
+        anitkabir.content="Atatürk bir devri açıp yeni bir düzeni getirdikten sonra 10 Kasım 1938'de öldüğünde, geçici olarak Etnografya Müzesi'ne defnedildi. Uygun bir anıt yeri aranmasına hemen başlandı ve Ankara'nın kente egemen bir tepesi olan Rasattepe uygun görüldü. Anıtkabir'in projesi bir yarışmayla belirlendi. Bu amaçla açılan yarışmada Emin Onat ve Orhan Arda'nın projesi başarılı görülerek uygulanmasına karar verildi.\n" +
+                "\n" +
+                "Anıtkabir bugünkü adı Anıttepe olan yerde 15 bin metrekarelik bir alanda yapıldı. Yapımında Çankırı'nın açık sarı ve gri travertenleri kullanıldı.\n" +
+                "\n" +
+                "Anıtkabir bütün Türklerin sevgisinin, saygısının bütünleştiği bir simgedir. Başlangıç noktasındaki İstiklal ve Hürriyet kulelerinden, iki yanında Hüseyin Özkan'ın 24 Hitit aslanının yer aldığı Aslanlı Yoldan, Mehmetçik, Müdafaa-i Hukuk, Cumhuriyet, Zafer, İnkılap, Misak-ı Milli, Barış ve 23 Nisan kulelerinin çepeçevre sarmaladığı Zafer Alanı'na kadar her nokta, Türk'ün verdiği bağımsızlık ve özgürlük savaşını anlatır. 32 x 60 metre boyutlarında ve 20 metre yüksekliğinde, duvarları ve döşemesi koyu renkli Bilecik mermerleriyle kaplı, tavanı altın mozaikle süslü Büyük Salon'un gizemli havası ise insanı, acılarla, gözyaşlarıyla dolu savaş yıllarına götürür. Salonun giriş kapısının karşısında, penceresi Ankara Kalesi'ne bakan duvarın önündeki taş bir set üstünde tek parça mermerden oluşan simgesel bir lahit vardır. Atatürk'ün naaşı, lahdin tam altındaki toprak mezardadır."
+        /*39.925276, 32.836955*/
+        anitkabir.latitude=39.925276
+        anitkabir.longitude=32.836955
+
+        lists.add(anitkabir)
+        lists.add(ulucamii)
         lists.add(school)
         lists.add(uludag)
 

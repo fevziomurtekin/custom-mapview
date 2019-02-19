@@ -482,6 +482,21 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                 PlaceType.RESTUARANT -> {
                     icon = R.drawable.rest
                 }
+                PlaceType.MALL -> {
+                    icon = R.drawable.mall
+                }
+                PlaceType.MOSQUE -> {
+                    icon = R.drawable.mosque
+                }
+                PlaceType.STADIUM -> {
+                    icon = R.drawable.stadium
+                }
+                PlaceType.MUSEUM -> {
+                    icon = R.drawable.museum
+                }
+                PlaceType.HEART -> {
+                    icon = R.drawable.like
+                }
             }
 
             GlideApp.with(this.applicationContext)
@@ -697,13 +712,14 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                 searchAnimation()
             }
             R.id.btn_menu ->{
+                try{markerAdapter?.itemView!!.visibility=View.GONE}catch (e:java.lang.Exception){}
                 if(placesList!=null) {
                     if (!placesList!!.isEmpty())
                         menuAnimation()
                 }
             }
             R.id.btn_phone->{
-
+                try{markerAdapter?.itemView!!.visibility=View.GONE}catch (e:java.lang.Exception){}
                 if(isMenuList) {
                     menuAnimation()
                 }
@@ -727,6 +743,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                 }
             }
             R.id.btn_way->{
+                try{markerAdapter?.itemView!!.visibility=View.GONE}catch (e:java.lang.Exception){}
                 if(isMenuList) {
                     menuAnimation()
                 }
@@ -735,14 +752,13 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                     searchAnimation()
                 }
 
-                try{markerAdapter?.itemView!!.visibility=View.GONE}catch (e:java.lang.Exception){}
                 getLastLocation()
                 val place = v.tag as Place
                 drawLine(place)
             }
 
             R.id.btn_target->{
-
+                try{markerAdapter?.itemView!!.visibility=View.GONE}catch (e:java.lang.Exception){}
                 if(isMenuList) {
                     menuAnimation()
                 }
@@ -751,7 +767,6 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                     searchAnimation()
                 }
 
-                try{markerAdapter?.itemView!!.visibility=View.GONE}catch (e:java.lang.Exception){}
                 if(current_latlng.latitude!=0.toDouble() && current_latlng.longitude!=0.toDouble()){
                     moveMap(current_latlng)
                 }
