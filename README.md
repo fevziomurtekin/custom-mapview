@@ -7,6 +7,15 @@
 
 # Usage
 
+- You must enter your Google Map key in Android Manifest.xml.
+```Gradle
+  <meta-data
+                android:name="com.google.android.maps.v2.API_KEY"
+                android:value="@string/google_maps_key" /
+  ```
+  
+  - Include the necessary libraries in app->build.gradle  .
+		
 ```Gradle
     allprojects {
 		repositories {
@@ -18,6 +27,7 @@
   .....
     dependencies {
 	    implementation 'com.github.fevziomurtekin:custom-mapview:0.1.0'
+	    implementation 'com.google.android.gms:play-services-maps:16.1.0'
 	  }
 	}
   ```
@@ -56,6 +66,8 @@
     }
 }
   ```
+  
+
   
 # Attributes
 
