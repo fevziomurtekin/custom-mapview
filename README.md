@@ -1,7 +1,7 @@
 ## Custom MapView
 🗺️ A customized Android library made using Google map.
 
-![Alt Text](https://media.giphy.com/media/WgTLhbSWRXh2aNqcrI/giphy.gif)
+<iframe src="https://giphy.com/embed/WgTLhbSWRXh2aNqcrI" width="264" height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/android-kotlin-mapview-WgTLhbSWRXh2aNqcrI">via GIPHY</a></p>
 
 # Usage
 
@@ -48,7 +48,7 @@
         this.addPlacesList(lists)
         this.setMenuAnimation_time(350)  
         this.setSearchAnimation_time(350)
-	this.setFocus(LatLng(40.1122,29.061927))
+	    this.setFocus(LatLng(40.1122,29.061927))
         this.setDefaultSearchError("error.")
 
     }
@@ -63,7 +63,7 @@
 | `menuAnimation_time` | The time in int of the menu animation time (by default 300 ms) |
 | `searchAnimation_time` | The time in int of the search animation time (by default 300 ms) |
 | `defauiltSearchError` | The value in string of the message items (by default "The location you were looking for was not found on the map.")  |
-| `focus` | The location in LatLng of the location (by default (39.92077,32.85411) |
+| `focus` | The location in LatLng of the location (by default 39.92077,32.85411) |
 
 
 
