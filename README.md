@@ -23,7 +23,6 @@
 			maven { url 'https://jitpack.io' }
 		}
 	}
-  
   .....
     dependencies {
 	    implementation 'com.github.fevziomurtekin:custom-mapview:0.1.0'
@@ -79,7 +78,20 @@
 | `defauiltSearchError` | The value in string of the message items (by default "The location you were looking for was not found on the map.")  |
 | `focus` | The location in LatLng of the location (by default 39.92077,32.85411) |
 
+> To add new places to the map, a list derived from the "Palace" class must be submitted.
 
+| Key | Value |
+| --- | --- |
+| `name` | The name in string of marker snippet. " |
+| `content` | The name in string of content on the page that opens when you clicked. |
+| `latitude` | The name in double of marker position-latitude. (by default 0.0) |
+| `longitude` |  The name in double of marker position-longitude. (by default 0.0) |
+| `placeType` | RESTUARANT, HOTEL, BAR, BANK, GAS_STATION, PARKING_AREA,STORE, HOSPITAL, COFFEE, SCHOOL, MUSEUM , MALL,MOSQUE,STADIUM, HEART, OTHER |
+| `url` | The url in string of the Place-url (by default "") |
+| `resource` | The resource in Int of the resource (by default -1. eg. R.drawable.map) |
+| `phone` | The phone number in string of the Place-number (by default "" ) |
+
+> If you leave the url and resource sections blank, we will use the icons we give automatically.
 
 ## License
 The Apache License 2.0 - see [`LICENSE`](LICENSE) for more details
