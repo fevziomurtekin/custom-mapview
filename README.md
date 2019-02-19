@@ -1,7 +1,7 @@
 ## Custom MapView
 🗺️ A customized Android library made using Google map.
 
-<iframe src="https://giphy.com/embed/WgTLhbSWRXh2aNqcrI" width="264" height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/android-kotlin-mapview-WgTLhbSWRXh2aNqcrI">via GIPHY</a></p>
+!(image)[https://media.giphy.com/media/WgTLhbSWRXh2aNqcrI/giphy.gif]
 
 # Usage
 
