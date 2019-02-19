@@ -692,14 +692,6 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
 
     override fun onClick(v: View?) {
 
-        if(isMenuList) {
-            menuAnimation()
-        }
-
-        if(isSearchList){
-            searchAnimation()
-        }
-
         when(v!!.id) {
             R.id.btn_search -> {
                 searchAnimation()
@@ -711,6 +703,15 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                 }
             }
             R.id.btn_phone->{
+
+                if(isMenuList) {
+                    menuAnimation()
+                }
+
+                if(isSearchList){
+                    searchAnimation()
+                }
+
                 phone = v.getTag() as String
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -726,6 +727,14 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                 }
             }
             R.id.btn_way->{
+                if(isMenuList) {
+                    menuAnimation()
+                }
+
+                if(isSearchList){
+                    searchAnimation()
+                }
+
                 try{markerAdapter?.itemView!!.visibility=View.GONE}catch (e:java.lang.Exception){}
                 getLastLocation()
                 val place = v.tag as Place
@@ -733,6 +742,15 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
             }
 
             R.id.btn_target->{
+
+                if(isMenuList) {
+                    menuAnimation()
+                }
+
+                if(isSearchList){
+                    searchAnimation()
+                }
+
                 try{markerAdapter?.itemView!!.visibility=View.GONE}catch (e:java.lang.Exception){}
                 if(current_latlng.latitude!=0.toDouble() && current_latlng.longitude!=0.toDouble()){
                     moveMap(current_latlng)
@@ -740,6 +758,13 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
             }
 
             R.id.btn_search_item->{
+                if(isMenuList) {
+                    menuAnimation()
+                }
+
+                if(isSearchList){
+                    searchAnimation()
+                }
                 try{markerAdapter?.itemView!!.visibility=View.GONE}catch (e:java.lang.Exception){}
                 val place = v.tag as Place
                 updateMarker(tempPlaceList,getString(R.string.default_menu))
@@ -748,6 +773,13 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
             }
 
             R.id.btn_menu_item->{
+                if(isMenuList) {
+                    menuAnimation()
+                }
+
+                if(isSearchList){
+                    searchAnimation()
+                }
                 try{markerAdapter?.itemView!!.visibility=View.GONE}catch (e:java.lang.Exception){}
                 val menu = v.tag as String
                 val places:List<Place> = Util.getPlaces(menu,placesList)
