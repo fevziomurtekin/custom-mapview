@@ -6,6 +6,7 @@ import android.os.Bundle
 import com.fevziomurtekin.custom_mapview.View
 import com.fevziomurtekin.custom_mapview.data.Place
 import com.fevziomurtekin.custom_mapview.util.PlaceType
+import com.google.android.gms.maps.model.LatLng
 
 class MainActivity : View() {
 
@@ -67,6 +68,11 @@ class MainActivity : View() {
         lists.add(uludag)
 
         this.addPlacesList(lists)
+        this.setMenuAnimation_time(350)
+        this.setSearchAnimation_time(350)
+        this.setFocus(LatLng(40.1122,29.061927))
+        this.setDefaultSearchError("error.")
+
 
     }
 }

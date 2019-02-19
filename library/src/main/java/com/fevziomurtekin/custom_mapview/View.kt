@@ -53,8 +53,17 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
     private lateinit var mMap: GoogleMap
 
     /*Default focused location. (Turkey location) */
-    private val focus : LatLng = LatLng(39.92077,32.85411)
+    private var focus : LatLng = LatLng(39.92077,32.85411)
 
+    /*Default animation time.*/
+    private var searchAnimation_time = 300
+
+    /*Default animation time.*/
+    private var menuAnimation_time = 300
+
+    private var defaultSearchError="The location you were looking for was not found on the map."
+
+    /* Phone screen attributes.*/
     private var mheight: Float = 0.toFloat()
 
     private var mwidth:Float = 0.toFloat()
@@ -66,12 +75,6 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
     private var search_counter :Int =0
 
     private var menu_counter : Int=0
-
-    /*Default animation time.*/
-    private var searchAnimation_time = 300
-
-    /*Default animation time.*/
-    private var menuAnimation_time = 300
 
     /*Places list added in Activity*/
     private var placesList : MutableList<Place>? = null
@@ -91,8 +94,6 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private var activity:com.fevziomurtekin.custom_mapview.View=this
-
-    private val defaultSearchError="The location you were looking for was not found on the map."
 
     private var builder:LatLngBounds.Builder=LatLngBounds.builder()
 
@@ -416,7 +417,9 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         menu_counter++
     }
 
-    fun addPlacesList(places: MutableList<Place>){
+    /*Attributes.*/
+
+    protected fun addPlacesList(places: MutableList<Place>){
         tempPlaceList.clear()
         this.placesList=places
 
@@ -440,6 +443,14 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         recycler_search.adapter = SearchAdapter(places,this)
 
     }
+
+    protected fun setDefaultSearchError(error:String){defaultSearchError=error}
+
+    protected fun setFocus (focus:LatLng){this.focus=focus}
+
+    protected fun setSearchAnimation_time(searchAnimation_time:Int){this.searchAnimation_time=searchAnimation_time}
+
+    protected fun setMenuAnimation_time(menuAnimation_time:Int){this.menuAnimation_time=menuAnimation_time}
 
     private fun setIconMarker(place: Place, markerOptions: MarkerOptions) {
         if (!place.isUrl) {
