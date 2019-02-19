@@ -25,13 +25,13 @@
 	}
   .....
     dependencies {
-	    implementation 'com.github.fevziomurtekin:custom-mapview:0.1.0'
+	    implementation 'com.github.fevziomurtekin:custom-mapview:0.1.1'
 	    implementation 'com.google.android.gms:play-services-maps:16.1.0'
 	  }
 	}
   ```
 
-</br> Include in the activity 
+- Include in the activity 
 
  ```Gradle 
  class MainActivity : View() {
@@ -65,8 +65,6 @@
     }
 }
   ```
-  
-
   
 # Attributes
 
