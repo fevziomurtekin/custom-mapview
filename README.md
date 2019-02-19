@@ -17,7 +17,7 @@
   
   .....
     dependencies {
-	    implementation 'com.github.fevziomurtekin..'
+	    implementation 'com.github.fevziomurtekin:custom-mapview:0.1.0'
 	  }
 	}
   ```
