@@ -8,9 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.Camera
 import android.graphics.Point
-import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
@@ -45,8 +43,6 @@ import kotlinx.android.synthetic.main.view_layout.*
 
 const val LOCATION = 1001
 const val PHONE = 1002
-const val LOCATION_REFRESH_TIME=300
-const val LOCATION_REFRESH_DISTANCE=300
 
 open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener, GoogleMap.OnMapClickListener,
     GoogleMap.OnMarkerClickListener {
@@ -98,6 +94,13 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
 
     private val defaultSearchError="The location you were looking for was not found on the map."
 
+    private var builder:LatLngBounds.Builder=LatLngBounds.builder()
+
+    private var markerList:MutableList<MarkerOptions> = mutableListOf()
+
+    private var tempPlaceList:MutableList<Place> = mutableListOf()
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,6 +112,8 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         setDisplaySize()
 
         initMapView()
+
+        btn_menu.isEnabled=false
 
         btn_search.setOnClickListener(this)
         btn_target.setOnClickListener(this)
@@ -395,40 +400,28 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
     }
 
     fun addPlacesList(places: List<Place>){
+        tempPlaceList.clear()
         this.placesList=places
 
         if(placesList!=null) {
+
+            btn_menu.isEnabled=true
+
             for (place in placesList!!) {
                 val markerOptions : MarkerOptions = MarkerOptions()
                     .snippet(place.name)
                     .position(LatLng(place.latitude,place.longitude))
                     .title("")
                     .draggable(false)
-
+                markerList.add(markerOptions)
                 setIconMarker(place,markerOptions)
+                tempPlaceList.add(place)
             }
         }
 
-        recycler_place_type.adapter = MenuAdapter(getMenuType(places),this)
-
+        recycler_place_type.adapter = MenuAdapter(Util.getMenuType(places),this)
         recycler_search.adapter = SearchAdapter(places,this)
 
-    }
-
-    private fun getMenuType(places: List<Place>): List<String> {
-        val arrays :MutableList<String> = mutableListOf()
-
-        for(place in places) {
-            if (!arrays.isEmpty()) {
-                var isFound = false
-                for (y in 0..arrays.size - 1) {
-                    if (arrays[y] ==place.placeType.name) isFound = true
-                }
-                if (!isFound) arrays.add(place.placeType.name)
-            }else arrays.add(place.placeType.name)
-        }
-
-        return arrays
     }
 
     private fun setIconMarker(place: Place, markerOptions: MarkerOptions) {
@@ -585,6 +578,51 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         }
     }
 
+    private fun updateMarker(
+        places: List<Place>,
+        menu: String
+    ) {
+        mMap.clear()
+        markerList.clear()
+
+        if(menu==getString(R.string.default_menu)){
+            for(place in tempPlaceList){
+                val marker : MarkerOptions = MarkerOptions()
+                    .position(LatLng(place.latitude,place.longitude))
+                    .title("")
+                    .snippet(place.name)
+                    .draggable(false)
+                markerList.add(marker)
+                setIconMarker(place,marker)
+            }
+
+        }else{
+            for(place in places){
+                val marker : MarkerOptions = MarkerOptions()
+                    .position(LatLng(place.latitude,place.longitude))
+                    .title("")
+                    .snippet(place.name)
+                    .draggable(false)
+                markerList.add(marker)
+                setIconMarker(place,marker)
+            }
+        }
+
+        centerToMap(markerList)
+
+    }
+
+    private fun centerToMap(markerList: MutableList<MarkerOptions>){
+        for(marker in markerList){
+            builder.include(marker.position)
+        }
+
+        val bounds :LatLngBounds = builder.build()
+        val padding = 50
+        val cameraUpdate :CameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds,padding)
+        mMap.animateCamera(cameraUpdate)
+    }
+
     private fun moveMap(location:LatLng){
         mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(location,15f))
     }
@@ -637,6 +675,15 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
     }
 
     override fun onClick(v: View?) {
+
+        if(isMenuList) {
+            menuAnimation()
+        }
+
+        if(isSearchList){
+            searchAnimation()
+        }
+
         when(v!!.id) {
             R.id.btn_search -> {
                 searchAnimation()
@@ -648,7 +695,6 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                 }
             }
             R.id.btn_phone->{
-
                 phone = v.getTag() as String
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -662,10 +708,6 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
                         callPhone()
                     }
                 }
-
-
-
-
             }
             R.id.btn_way->{
 
@@ -679,18 +721,24 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
 
             R.id.btn_search_item->{
                 val place = v.tag as Place
-
-                if(isMenuList) {
-                    menuAnimation()
-                }
-
-                if(isSearchList){
-                    searchAnimation()
-                }
-
                 moveMap(LatLng(place.latitude,place.longitude))
 
             }
+
+            R.id.btn_menu_item->{
+                val menu = v.tag as String
+                val places:List<Place> = Util.getPlaces(menu,placesList)
+                val adapter : MenuAdapter = recycler_place_type.adapter as MenuAdapter
+                adapter.updateMenu(Util.getMenuList(menu,btn_menu.text.toString(),
+                    adapter.getList() as MutableList<String>
+                )!!)
+                btn_menu.text=menu
+
+                updateMarker(places,menu)
+
+
+            }
+
         }
     }
 

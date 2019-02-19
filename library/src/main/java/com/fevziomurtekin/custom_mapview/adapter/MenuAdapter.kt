@@ -40,6 +40,15 @@ class MenuAdapter : RecyclerView.Adapter<MenuAdapter.ViewHolder>{
 
     }
 
+    fun updateMenu(arrays: List<String>) {
+        this.list = arrays
+        notifyDataSetChanged()
+    }
+
+    fun getList():List<String>{
+        return list
+    }
+
 
     class ViewHolder(
         itemView: android.view.View,
