@@ -649,7 +649,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
         }
 
         val bounds :LatLngBounds = builder.build()
-        val padding = 50
+        val padding = 10
         val cameraUpdate :CameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds,padding)
         mMap.animateCamera(cameraUpdate)
     }
@@ -706,7 +706,7 @@ open class View : AppCompatActivity(), OnMapReadyCallback, View.OnClickListener,
     }
 
     override fun onClick(v: View?) {
-        Util.hideKeyboard(activity)
+        try{Util.hideKeyboard(activity)}catch (e:Exception){}
         when(v!!.id) {
             R.id.btn_search -> {
                 searchAnimation()
