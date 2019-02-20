@@ -11,7 +11,7 @@
 ```Gradle
   <meta-data
                 android:name="com.google.android.maps.v2.API_KEY"
-                android:value="@string/google_maps_key" /
+                android:value="YOUR-GOOGLEMAP-API" /
   ```
   
   - Include the necessary libraries in app->build.gradle  .
