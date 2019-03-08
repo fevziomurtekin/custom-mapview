@@ -25,7 +25,7 @@
 	}
   .....
     dependencies {
-	    implementation 'com.github.fevziomurtekin:custom-mapview:0.1.1'
+	    implementation 'com.github.fevziomurtekin:custom-mapview:0.1.2'
 	    implementation 'com.google.android.gms:play-services-maps:16.1.0'
 	  }
 	}
