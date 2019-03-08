@@ -10,19 +10,19 @@
 - You must enter your Google Map key in Android Manifest.xml.
 ```Gradle
   <meta-data
-                android:name="com.google.android.maps.v2.API_KEY"
-                android:value="YOUR-GOOGLEMAP-API" /
+	android:name="com.google.android.maps.v2.API_KEY"
+	android:value="YOUR-GOOGLEMAP-API" />
   ```
   
   - Include the necessary libraries in app->build.gradle  .
 		
 ```Gradle
     allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
 	}
+    }
   .....
     dependencies {
 	    implementation 'com.github.fevziomurtekin:custom-mapview:0.1.2'
@@ -72,7 +72,7 @@
 | `PlaceList` | List of places to add on the map. " |
 | `menuAnimation_time` | The time in int of the menu animation time (by default 300 ms) |
 | `searchAnimation_time` | The time in int of the search animation time (by default 300 ms) |
-| `defauiltSearchError` | The value in string of the message items (by default "The location you were looking for was not found on the map.")  |
+| `defaultSearchError` | The value in string of the message items (by default "The location you were looking for was not found on the map.")  |
 | `focus` | The location in LatLng of the location (by default 39.92077,32.85411) |
 
 > To add new places to the map, a list derived from the Place class must be submitted.
