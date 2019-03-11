@@ -71,7 +71,7 @@
 
 | Attribute | Description |
 | --- | --- |
-| `PlaceList` | List of places to add on the map. " |
+| `PlaceList` | List of places to add on the map.  |
 | `menuAnimation_time` | The time in int of the menu animation time (by default 300 ms) |
 | `searchAnimation_time` | The time in int of the search animation time (by default 300 ms) |
 | `defaultSearchError` | The value in string of the message items (by default "The location you were looking for was not found on the map.")  |
