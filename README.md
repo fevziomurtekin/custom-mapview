@@ -1,4 +1,5 @@
-[![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-Custom%20Map%20View-green.svg?style=flat )]( https://android-arsenal.com/details/1/7566 )
+[![](https://jitpack.io/v/fevziomurtekin/custom-mapview.svg)](https://jitpack.io/#fevziomurtekin/custom-mapview) [![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-Custom%20Map%20View-green.svg?style=flat )]( https://android-arsenal.com/details/1/7566 ) 
+
 
 ## Custom MapView
 🗺️ A customized Android library made using Google map.
